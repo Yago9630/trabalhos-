@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background-color: #eee8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            width: 100%;
+            max-width: 420px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #7136a5;
+            margin-bottom: 25px;
+        }
+
+        .campo {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #444;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #8246af;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #8246af;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #65358b;
+        }
+
+        #mensagem {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .erro {
+            color: red;
+        }
+
+        .sucesso {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Cadastro de Usuário</h1>
+
+        <form id="formulario">
+
+            <div class="campo">
+                <label>Nome:</label>
+                <input type="text" id="nome" placeholder="Digite seu nome">
+            </div>
+
+            <div class="campo">
+                <label>Idade:</label>
+                <input type="number" id="idade" min="0" placeholder="Digite sua idade">
+            </div>
+
+            <div class="campo">
+                <label>E-mail:</label>
+                <input type="text" id="email" placeholder="exemplo@email.com">
+            </div>
+
+            <div class="campo">
+                <label>CEP:</label>
+                <input type="text" id="cep" maxlength="9" placeholder="00000-000">
+            </div>
+
+            <div class="campo">
+                <label>Data de nascimento:</label>
+                <input type="date" id="nascimento">
+            </div>
+
+            <div class="campo">
+                <label>RG:</label>
+                <input type="text" id="rg" placeholder="Digite seu RG">
+            </div>
+
+            <button type="submit">Cadastrar</button>
+
+            <p id="mensagem"></p>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        const formulario = document.getElementById("formulario");
+
+        formulario.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const nome = document.getElementById("nome").value.trim();
+            const idade = document.getElementById("idade").value;
+            const email = document.getElementById("email").value.trim();
+            const cep = document.getElementById("cep").value.trim();
+            const nascimento = document.getElementById("nascimento").value;
+            const rg = document.getElementById("rg").value.trim();
+
+            const mensagem = document.getElementById("mensagem");
+
+            const regexNome = /^[A-Za-zÀ-ÿ\s]{4,}$/;
+            const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const regexCEP = /^\d{5}-?\d{3}$/;
+            const regexRG = /^[A-Za-z0-9]+$/;
+
+            if (!regexNome.test(nome)) {
+                mensagem.innerHTML = "Nome deve ter pelo menos 4 letras.";
+                mensagem.className = "erro";
+                return;
+            }
+
+            if (idade === "" || Number(idade) < 0) {
+                mensagem.innerHTML = "Idade inválida!";
+                mensagem.className = "erro";
+                return;
+            }
+
+            if (!regexEmail.test(email)) {
+                mensagem.innerHTML = "E-mail inválido!";
+                mensagem.className = "erro";
+                return;
+            }
+
+            if (!regexCEP.test(cep)) {
+                mensagem.innerHTML = "CEP inválido!";
+                mensagem.className = "erro";
+                return;
+            }
+
+            if (nascimento === "") {
+                mensagem.innerHTML = "Informe a data de nascimento!";
+                mensagem.className = "erro";
+                return;
+            }
+
+            const hoje = new Date();
+            const dataNascimento = new Date(nascimento + "T00:00:00");
+
+            const dataAtual = new Date(
+                hoje.getFullYear(),
+                hoje.getMonth(),
+                hoje.getDate()
+            );
+
+            if (dataNascimento.getTime() === dataAtual.getTime()) {
+                mensagem.innerHTML = "A data não pode ser hoje!";
+                mensagem.className = "erro";
+                return;
+            }
+
+            if (dataNascimento > dataAtual) {
+                mensagem.innerHTML = "A data não pode ser futura!";
+                mensagem.className = "erro";
+                return;
+            }
+
+            if (!regexRG.test(rg)) {
+                mensagem.innerHTML = "RG deve conter letras e números!";
+                mensagem.className = "erro";
+                return;
+            }
+
+            mensagem.innerHTML = "Cadastro realizado com sucesso!";
+            mensagem.className = "sucesso";
+
+            formulario.reset();
+
+        });
+
+    </script>
+
+</body>
+</html>
